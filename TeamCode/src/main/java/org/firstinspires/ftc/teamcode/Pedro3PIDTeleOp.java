@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants; // your tuned Constants class
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Field Centric TeleOp (Pedro 3)", group = "TeleOp")
 public class Pedro3PIDTeleOp extends OpMode {
@@ -25,6 +26,13 @@ public class Pedro3PIDTeleOp extends OpMode {
     // Tune these as needed (range -1.0 to 1.0)
     private static final double LAUNCHER_POWER = 1.0;
     private static final double INTAKE_POWER = 1.0;
+
+    private Servo servo;
+    private boolean servoOpen = false;
+
+    // Replace these with the values you read from the calibration OpMode
+    private static final double SERVO_START_POS = 0.20;  // closed / start position
+    private static final double SERVO_OPEN_POS  = 0.65;  // open position
 
     @Override
     public void init() {
@@ -46,6 +54,9 @@ public class Pedro3PIDTeleOp extends OpMode {
 
         launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        servo = hardwareMap.get(Servo.class, "servo"); // your config name
+        servo.setPosition(SERVO_START_POS);
     }
 
     @Override
@@ -84,6 +95,12 @@ public class Pedro3PIDTeleOp extends OpMode {
         }
         intake.setPower(intakeOn ? INTAKE_POWER : 0);
 
+        // B toggles servo open/closed
+        if (gamepad1.bWasPressed()) {
+            servoOpen = !servoOpen;
+        }
+        servo.setPosition(servoOpen ? SERVO_OPEN_POS : SERVO_START_POS);
+
         // Must be called every loop
         follower.update();
 
@@ -93,6 +110,7 @@ public class Pedro3PIDTeleOp extends OpMode {
         telemetry.addData("Heading (deg)", "%.1f", Math.toDegrees(pose.heading()));
         telemetry.addData("Launcher", launcherOn ? "ON" : "OFF");
         telemetry.addData("Intake", intakeOn ? "ON" : "OFF");
+        telemetry.addData("Servo", servoOpen ? "OPEN" : "CLOSED");
         telemetry.update();
     }
 }

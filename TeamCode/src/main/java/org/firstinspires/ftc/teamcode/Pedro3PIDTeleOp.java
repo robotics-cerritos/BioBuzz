@@ -8,6 +8,7 @@ import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants; // your tuned Constants class
 import com.qualcomm.robotcore.hardware.Servo;
@@ -47,7 +48,7 @@ public class Pedro3PIDTeleOp extends OpMode {
 
         // Flip either of these if the mechanism spins the wrong way:
         // launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-        // intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

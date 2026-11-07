@@ -32,8 +32,8 @@ public class Pedro3PIDTeleOp extends OpMode {
     private boolean servoOpen = false;
 
     // Replace these with the values you read from the calibration OpMode
-    private static final double SERVO_START_POS = 0.20;  // closed / start position
-    private static final double SERVO_OPEN_POS  = 0.65;  // open position
+    private static final double SERVO_START_POS = 0.185;  // closed / start position
+    private static final double SERVO_OPEN_POS  = 0.25;  // open position
 
     @Override
     public void init() {

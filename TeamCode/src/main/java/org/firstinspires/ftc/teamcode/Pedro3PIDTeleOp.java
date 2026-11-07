@@ -8,7 +8,6 @@ import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants; // your tuned Constants class
 
@@ -16,6 +15,16 @@ import org.firstinspires.ftc.teamcode.pedro.Constants; // your tuned Constants c
 public class Pedro3PIDTeleOp extends OpMode {
 
     private Follower follower;
+
+    private DcMotorEx launcher;
+    private DcMotorEx intake;
+
+    private boolean launcherOn = false;
+    private boolean intakeOn = false;
+
+    // Tune these as needed (range -1.0 to 1.0)
+    private static final double LAUNCHER_POWER = 1.0;
+    private static final double INTAKE_POWER = 1.0;
 
     @Override
     public void init() {
@@ -25,7 +34,18 @@ public class Pedro3PIDTeleOp extends OpMode {
         // Heading here defines which way "forward" is for field-centric driving.
         follower.setPose(new Pose(0, 0, 0));
 
+        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
+        // Flip either of these if the mechanism spins the wrong way:
+        // launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+        // intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     @Override
@@ -52,6 +72,18 @@ public class Pedro3PIDTeleOp extends OpMode {
             follower.setPose(new Pose(current.x(), current.y(), Math.toRadians(0)));
         }
 
+        // A toggles launcher
+        if (gamepad1.aWasPressed()) {
+            launcherOn = !launcherOn;
+        }
+        launcher.setPower(launcherOn ? LAUNCHER_POWER : 0);
+
+        // Y toggles intake
+        if (gamepad1.yWasPressed()) {
+            intakeOn = !intakeOn;
+        }
+        intake.setPower(intakeOn ? INTAKE_POWER : 0);
+
         // Must be called every loop
         follower.update();
 
@@ -59,7 +91,8 @@ public class Pedro3PIDTeleOp extends OpMode {
         telemetry.addData("X (in)", "%.2f", pose.x());
         telemetry.addData("Y (in)", "%.2f", pose.y());
         telemetry.addData("Heading (deg)", "%.1f", Math.toDegrees(pose.heading()));
-        telemetry.addData("Slow mode", gamepad1.left_bumper);
+        telemetry.addData("Launcher", launcherOn ? "ON" : "OFF");
+        telemetry.addData("Intake", intakeOn ? "ON" : "OFF");
         telemetry.update();
     }
 }
